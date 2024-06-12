@@ -1,19 +1,52 @@
 import services from '@/services/demo';
 import {
   ActionType,
-  FooterToolbar,
   PageContainer,
   ProDescriptions,
   ProDescriptionsItemProps,
+  ProList,
   ProTable,
 } from '@ant-design/pro-components';
-import { Button, Divider, Drawer, message } from 'antd';
+
+import { Col, Drawer, Row, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import CreateForm from './components/CreateForm';
 import UpdateForm, { FormValueType } from './components/UpdateForm';
 
-const { addUser, queryUserList, deleteUser, modifyUser } =
-  services.UserController;
+const defaultData = [
+  {
+    id: '1',
+    name: '语雀的天空',
+    image:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+    desc: '我是一条测试的描述',
+  },
+  {
+    id: '2',
+    name: 'Ant Design',
+    image:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+    desc: '我是一条测试的描述',
+  },
+  {
+    id: '3',
+    name: '蚂蚁金服体验科技',
+    image:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+    desc: '我是一条测试的描述',
+  },
+  {
+    id: '4',
+    name: 'TechUI',
+    image:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+    desc: '我是一条测试的描述',
+  },
+];
+
+type DataItem = (typeof defaultData)[number];
+
+const { addUser, queryUserList, modifyUser } = services.UserController;
 
 /**
  * 添加节点
@@ -45,8 +78,8 @@ const handleUpdate = async (fields: FormValueType) => {
         userId: fields.id || '',
       },
       {
-        name: fields.name || '',
-        nickName: fields.nickName || '',
+        time: fields.time || '',
+        exceptionType: fields.exceptionType || '',
         email: fields.email || '',
       },
     );
@@ -61,27 +94,6 @@ const handleUpdate = async (fields: FormValueType) => {
   }
 };
 
-/**
- *  删除节点
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: API.UserInfo[]) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await deleteUser({
-      userId: selectedRows.find((row) => row.id)?.id || '',
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
-
 const TableList: React.FC<unknown> = () => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] =
@@ -89,12 +101,12 @@ const TableList: React.FC<unknown> = () => {
   const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef<ActionType>();
   const [row, setRow] = useState<API.UserInfo>();
-  const [selectedRowsState, setSelectedRows] = useState<API.UserInfo[]>([]);
+  const [dataSource, setDataSource] = useState<DataItem[]>(defaultData);
+
   const columns: ProDescriptionsItemProps<API.UserInfo>[] = [
     {
-      title: '名称',
-      dataIndex: 'name',
-      tip: '名称是唯一的 key',
+      title: '时间',
+      dataIndex: 'time',
       formItemProps: {
         rules: [
           {
@@ -105,19 +117,26 @@ const TableList: React.FC<unknown> = () => {
       },
     },
     {
-      title: '昵称',
-      dataIndex: 'nickName',
+      title: '异常类型',
+      dataIndex: 'exceptionType',
       valueType: 'text',
     },
     {
-      title: '性别',
-      dataIndex: 'gender',
-      hideInForm: true,
-      valueEnum: {
-        0: { text: '男', status: 'MALE' },
-        1: { text: '女', status: 'FEMALE' },
-      },
+      title: '异常项',
+      dataIndex: 'exceptions',
+      valueType: 'text',
     },
+    {
+      title: '异常描述',
+      dataIndex: 'exceptionDescription',
+      valueType: 'text',
+    },
+    {
+      title: '异常等级',
+      dataIndex: 'exceptionLeveling',
+      valueType: 'text',
+    },
+
     {
       title: '操作',
       dataIndex: 'option',
@@ -130,10 +149,8 @@ const TableList: React.FC<unknown> = () => {
               setStepFormValues(record);
             }}
           >
-            配置
+            诊断
           </a>
-          <Divider type="vertical" />
-          <a href="">订阅警报</a>
         </>
       ),
     },
@@ -145,62 +162,74 @@ const TableList: React.FC<unknown> = () => {
         title: 'CRUD 示例',
       }}
     >
-      <ProTable<API.UserInfo>
-        headerTitle="查询表格"
-        actionRef={actionRef}
-        rowKey="id"
-        search={{
-          labelWidth: 120,
-        }}
-        toolBarRender={() => [
-          <Button
-            key="1"
-            type="primary"
-            onClick={() => handleModalVisible(true)}
-          >
-            新建
-          </Button>,
-        ]}
-        request={async (params, sorter, filter) => {
-          const { data, success } = await queryUserList({
-            ...params,
-            // FIXME: remove @ts-ignore
-            // @ts-ignore
-            sorter,
-            filter,
-          });
-          return {
-            data: data?.list || [],
-            success,
-          };
-        }}
-        columns={columns}
-        rowSelection={{
-          onChange: (_, selectedRows) => setSelectedRows(selectedRows),
-        }}
-      />
-      {selectedRowsState?.length > 0 && (
-        <FooterToolbar
-          extra={
-            <div>
-              已选择{' '}
-              <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              项&nbsp;&nbsp;
-            </div>
-          }
-        >
-          <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
+      <Row>
+        <Col span={17}>
+          <ProTable<API.UserInfo>
+            headerTitle="异常项列表"
+            actionRef={actionRef}
+            rowKey="id"
+            search={{
+              labelWidth: 120,
             }}
-          >
-            批量删除
-          </Button>
-          <Button type="primary">批量审批</Button>
-        </FooterToolbar>
-      )}
+            request={async (params, sorter, filter) => {
+              const { data, success } = await queryUserList({
+                ...params,
+                // FIXME: remove @ts-ignore
+                // @ts-ignore
+                sorter,
+                filter,
+              });
+              return {
+                data: data?.list || [],
+                success,
+              };
+            }}
+            columns={columns}
+          />
+        </Col>
+        <Col span={6} style={{ marginLeft: 20 }}>
+          <ProList<DataItem>
+            rowKey="id"
+            headerTitle="Top 10 异常POD"
+            rowClassName="sfg"
+            dataSource={dataSource}
+            showActions="hover"
+            editable={{
+              onSave: async (key, record, originRow) => {
+                console.log(key, record, originRow);
+                return true;
+              },
+            }}
+            onDataSourceChange={setDataSource}
+            metas={{
+              title: {
+                dataIndex: 'name',
+              },
+              avatar: {
+                dataIndex: 'image',
+                editable: false,
+              },
+              // description: {
+              //   dataIndex: 'desc',
+              // },
+
+              actions: {
+                render: (text, row, index, action) => [
+                  <a
+                    onClick={() => {
+                      action?.startEditable(row.id);
+                    }}
+                    key="link"
+                  >
+                    编辑
+                  </a>,
+                ],
+              },
+            }}
+          />
+        </Col>
+      </Row>
+
       <CreateForm
         onCancel={() => handleModalVisible(false)}
         modalVisible={createModalVisible}
@@ -249,15 +278,15 @@ const TableList: React.FC<unknown> = () => {
         }}
         closable={false}
       >
-        {row?.name && (
+        {row?.time && (
           <ProDescriptions<API.UserInfo>
             column={2}
-            title={row?.name}
+            title={row?.time}
             request={async () => ({
               data: row || {},
             })}
             params={{
-              id: row?.name,
+              id: row?.time,
             }}
             columns={columns}
           />

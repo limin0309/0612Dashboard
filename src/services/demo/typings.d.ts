@@ -48,12 +48,16 @@ declare namespace API {
 
   interface UserInfo {
     id?: string;
-    name?: string;
-    /** nick */
-    nickName?: string;
-    /** email */
-    email?: string;
-    gender?: UserGenderEnum;
+    time?: string;
+    /** 异常类型 */
+    exceptionType?: string;
+    /** 异常项 */
+    exceptions?: string;
+    /** 异常描述 */
+    exceptionDescription?: string;
+    // exceptionDescription?: UserGenderEnum;
+    /** 异常登级 */
+    exceptionLeveling?: string;
   }
 
   interface UserInfoVO {
