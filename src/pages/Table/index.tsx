@@ -8,9 +8,17 @@ import {
   ProList,
   ProTable,
 } from '@ant-design/pro-components';
-import { Button, Col, Divider, Row, Tabs } from 'antd';
+import dayjs from 'dayjs';
+
+import img1 from '@assets/img/img1.png';
+import { Col, DatePicker, Divider, Radio, Row, Tabs } from 'antd';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './index.less';
+dayjs.extend(customParseFormat);
+const { RangePicker } = DatePicker;
+
+const dateFormat = 'YYYY-MM-DD';
 
 const defaultData = [
   {
@@ -145,7 +153,24 @@ const TableList: React.FC<unknown> = () => {
     // setChartsData(data.list);
   };
 
-  const operations = <Button>Extra Action</Button>;
+  const operations = (
+    <div>
+      <Radio.Group
+        value={'1hour'}
+        style={{ marginBottom: 16, marginRight: 16 }}
+      >
+        <Radio.Button value="1hour">1小时</Radio.Button>
+        <Radio.Button value="today">今日</Radio.Button>
+        <Radio.Button value="week">本周</Radio.Button>
+      </Radio.Group>
+      <RangePicker
+        defaultValue={[
+          dayjs('2015-10-10', dateFormat),
+          dayjs('2015-10-10', dateFormat),
+        ]}
+      />
+    </div>
+  );
 
   const items = [
     {
@@ -190,7 +215,8 @@ const TableList: React.FC<unknown> = () => {
     },
   };
   // const config1 = {
-
+  //   winth: 100,
+  //   height: 40,
   //   data: [
   //     { year: '1991', value: 3 },
   //     { year: '1992', value: 4 },
@@ -309,19 +335,21 @@ const TableList: React.FC<unknown> = () => {
             <h3>CPU</h3>
             <div style={{ fontSize: '12px', display: 'flex' }}>
               <div>
-                <p>CPU核数</p>
+                <p className={styles.miniFont}>CPU核数</p>
                 <p>
                   <span className={styles.fontStyle}>8</span>
                 </p>
               </div>
               <Divider type="vertical" className={styles.divider} />
               <div>
-                <p>CPU利用率</p>
+                <p className={styles.miniFont}>CPU利用率</p>
                 <p>
                   <span className={styles.fontStyle}>2.3%</span>
                 </p>
               </div>
             </div>
+            <img src={img1} className={styles.imgS}></img>
+
             {/* <Area {...config1} /> */}
           </ProCard>
         </Col>
@@ -330,20 +358,20 @@ const TableList: React.FC<unknown> = () => {
             <h3>内存</h3>
             <div style={{ fontSize: '12px', display: 'flex' }}>
               <div>
-                <p>内存总量</p>
+                <p className={styles.miniFont}>内存总量</p>
                 <p>
                   <span className={styles.fontStyle}>15G</span>
                 </p>
               </div>
               <Divider type="vertical" className={styles.divider} />
               <div>
-                <p>剩余可用内存</p>
+                <p className={styles.miniFont}>剩余可用内存</p>
                 <p>
                   <span className={styles.fontStyle}>3G</span>
                 </p>
               </div>
             </div>
-            {/* <Area {...config1} /> */}
+            <img src={img1} className={styles.imgS}></img>
           </ProCard>
         </Col>
         <Col span={3} className={styles.minCard}>
@@ -351,25 +379,24 @@ const TableList: React.FC<unknown> = () => {
             <h3>磁盘</h3>
             <div style={{ fontSize: '12px', display: 'flex' }}>
               <div>
-                <p>磁盘空间</p>
+                <p className={styles.miniFont}>磁盘空间</p>
                 <p>
                   <span className={styles.fontStyle}>20T</span>
                 </p>
               </div>
               <Divider type="vertical" className={styles.divider} />
               <div>
-                <p>剩余可用空间</p>
+                <p className={styles.miniFont}>剩余可用空间</p>
                 <p>
                   <span className={styles.fontStyle}>14T</span>
                 </p>
               </div>
             </div>
-            {/* <Area {...config1} /> */}
+            <img src={img1} className={styles.imgS}></img>
           </ProCard>
         </Col>
       </Row>
       <Row style={{ marginBottom: '20px' }}>
-        {/* <Area {...config1} /> */}
         <ProCard>
           <div>
             <Tabs tabBarExtraContent={operations} items={items} />

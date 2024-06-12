@@ -1,4 +1,5 @@
 import { defineConfig } from '@umijs/max';
+const resolve = (dir) => require('path').join(__dirname, dir);
 
 export default defineConfig({
   antd: {},
@@ -8,6 +9,9 @@ export default defineConfig({
   request: {},
   layout: {
     title: '菜单',
+  },
+  alias: {
+    '@assets': resolve('/src/assets'),
   },
   routes: [
     {
