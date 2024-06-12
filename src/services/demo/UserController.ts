@@ -94,3 +94,47 @@ export async function deleteUser(
     ...(options || {}),
   });
 }
+
+/** 此处后端没有提供注释 GET /api/v1/queryLineChatsList */
+export async function queryChartsList(
+  params: {
+    // query
+    /** type  1小时 今日 本周*/
+    type?: string;
+    /** startTime */
+    startTime?: string;
+    /** endTime */
+    endTime?: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<API.Result_PageInfo_UserInfo__>('/api/v1/queryLineChatsList', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 GET /api/v1/queryLineChatsList */
+export async function queryDashboardData(
+  params: {
+    // query
+    /** type  1小时 今日 本周*/
+    type?: string;
+    /** startTime */
+    startTime?: string;
+    /** endTime */
+    endTime?: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<API.Result_PageInfo_UserInfo__>('/api/v1/queryDashboardData', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
