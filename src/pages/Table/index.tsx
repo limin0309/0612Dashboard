@@ -4,87 +4,84 @@ import {
   ActionType,
   PageContainer,
   ProCard,
-  ProDescriptions,
   ProDescriptionsItemProps,
   ProList,
   ProTable,
 } from '@ant-design/pro-components';
-
-import { Col, Drawer, Row, message } from 'antd';
+import { Button, Col, Divider, Row, Tabs } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
-
-import UpdateForm, { FormValueType } from './components/UpdateForm';
+import styles from './index.less';
 
 const defaultData = [
   {
     id: '1',
-    name: '语雀的天空',
+    name: 'asdfghjklkjhgfdsfgh',
     image:
       'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
-    desc: '我是一条测试的描述',
   },
   {
     id: '2',
-    name: 'Ant Design',
+    name: 'dgfhgjhklm,mnbvcnvbmn,m.,nmbvcbvnbm',
     image:
       'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
-    desc: '我是一条测试的描述',
   },
   {
     id: '3',
-    name: '蚂蚁金服体验科技',
+    name: 'fhgjklkhgdgfhgjhkjlkjhjghfghjk',
     image:
       'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
-    desc: '我是一条测试的描述',
   },
   {
     id: '4',
-    name: 'TechUI',
+    name: 'fhgjhkkjhgfdgfhgjhkjljhgfgdfhgjh',
     image:
       'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
-    desc: '我是一条测试的描述',
+  },
+  {
+    id: '5',
+    name: 'fhgjkjlk;kkhjghfgdfhgjhkjljhgfhgjh',
+    image:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+  },
+  {
+    id: '6',
+    name: 'ertyuiuo;lklnkbjvhcgdtyuhijklm',
+    image:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+  },
+  {
+    id: '7',
+    name: 'fgjhkjlkjkhjghfgdgfhgjhkjljkhjghfdg',
+    image:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+  },
+  {
+    id: '8',
+    name: 'gfhgjhkjlkjhjghfdgfhgjhkjlkjkhjghg',
+    image:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+  },
+  {
+    id: '9',
+    name: 'gjhkjklkfghjkjhgfghjk',
+    image:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+  },
+  {
+    id: '10',
+    name: 'ertyuyiojkmnbvhcgxfcghvbjknml,mnbt',
+    image:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
   },
 ];
 
 type DataItem = (typeof defaultData)[number];
 
-const { queryUserList, queryChartsList, queryDashboardData, modifyUser } =
+const { queryUserList, queryChartsList, queryDashboardData } =
   services.UserController;
 
-/**
- * 更新节点
- * @param fields
- */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('正在配置');
-  try {
-    await modifyUser(
-      {
-        userId: fields.id || '',
-      },
-      {
-        time: fields.time || '',
-        exceptionType: fields.exceptionType || '',
-        email: fields.email || '',
-      },
-    );
-    hide();
-
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
-
 const TableList: React.FC<unknown> = () => {
-  const [updateModalVisible, handleUpdateModalVisible] =
-    useState<boolean>(false);
-  const [stepFormValues, setStepFormValues] = useState({});
   const actionRef = useRef<ActionType>();
-  const [row, setRow] = useState<API.UserInfo>();
   const [dataSource, setDataSource] = useState<DataItem[]>(defaultData);
   const [chartsData, setChartsData] = useState([]); // 折线图表数据
   // const [chartsData, setChartsData] = useState([]);// 折线图表数据
@@ -127,16 +124,9 @@ const TableList: React.FC<unknown> = () => {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
-      render: (_, record) => (
+      render: () => (
         <>
-          <a
-            onClick={() => {
-              handleUpdateModalVisible(true);
-              setStepFormValues(record);
-            }}
-          >
-            诊断
-          </a>
+          <a>诊断</a>
         </>
       ),
     },
@@ -154,6 +144,19 @@ const TableList: React.FC<unknown> = () => {
     console.log(data, '172');
     // setChartsData(data.list);
   };
+
+  const operations = <Button>Extra Action</Button>;
+
+  const items = [
+    {
+      label: `健康分`,
+      key: 1,
+    },
+    {
+      label: `告警数量`,
+      key: 2,
+    },
+  ];
 
   useEffect(() => {
     asyncLineFetch();
@@ -216,6 +219,23 @@ const TableList: React.FC<unknown> = () => {
     <PageContainer
       header={{
         title: '节点健康度',
+        ghost: true,
+        breadcrumb: {
+          items: [
+            {
+              path: '',
+              title: '监控中心',
+            },
+            {
+              path: '',
+              title: '健康分',
+            },
+            {
+              path: '',
+              title: '节点健康度',
+            },
+          ],
+        },
       }}
     >
       <Row
@@ -228,60 +248,135 @@ const TableList: React.FC<unknown> = () => {
       >
         <Col span={4}>
           <ProCard style={asd}>
-            <h3>健康分</h3>
-            <p>98</p>
+            <div className={styles.dashboardCard}>
+              <div>
+                <span style={{ fontSize: '22px' }}>健康分</span>
+              </div>
+              <div style={{ color: '#d38461', fontSize: '30px' }}>96</div>
+            </div>
           </ProCard>
         </Col>
         <Col span={8}>
           <Row style={{ marginBottom: '10px' }}>
             <Col span={11}>
               <ProCard style={{ height: '75px' }}>
-                <h3>饱和度健康分</h3>
-                <p>100</p>
+                <div className={styles.dashboardCard}>
+                  <div>
+                    <span style={{ fontSize: '13px' }}>饱和度健康分</span>
+                  </div>
+                  <div style={{ color: '#9bbe64', fontSize: '20px' }}>100</div>
+                </div>
               </ProCard>
             </Col>
             <Col span={2}></Col>
             <Col span={11}>
               <ProCard style={{ height: '75px' }}>
-                <h3>延迟健康分</h3>
-                <p>88</p>
+                <div className={styles.dashboardCard}>
+                  <div>
+                    <span style={{ fontSize: '13px' }}>延迟健康分</span>
+                  </div>
+                  <div style={{ color: '#d38461', fontSize: '20px' }}>88</div>
+                </div>
               </ProCard>
             </Col>
           </Row>
           <Row>
             <Col span={11}>
               <ProCard style={{ height: '75px' }}>
-                <h3>负数健康分</h3>
-                <p>100</p>
+                <div className={styles.dashboardCard}>
+                  <div>
+                    <span style={{ fontSize: '13px' }}>负数健康分</span>
+                  </div>
+                  <div style={{ color: '#9bbe64', fontSize: '20px' }}>100</div>
+                </div>
               </ProCard>
             </Col>
             <Col span={2}></Col>
             <Col span={11}>
               <ProCard style={{ height: '75px' }}>
-                <h3>错误健康分</h3>
-                <p>100</p>
+                <div className={styles.dashboardCard}>
+                  <div>
+                    <span style={{ fontSize: '13px' }}>错误健康分</span>
+                  </div>
+                  <div style={{ color: '#9bbe64', fontSize: '20px' }}>100</div>
+                </div>
               </ProCard>
             </Col>
           </Row>
         </Col>
-        <Col span={3}>
-          <ProCard style={asd}>
-            <h3>错误健康分</h3>
-            <p>100</p>
+        <Col span={3} className={styles.minCard}>
+          <ProCard style={{ ...asd, padding: '10px' }}>
+            <h3>CPU</h3>
+            <div style={{ fontSize: '12px', display: 'flex' }}>
+              <div>
+                <p>CPU核数</p>
+                <p>
+                  <span className={styles.fontStyle}>8</span>
+                </p>
+              </div>
+              <Divider type="vertical" className={styles.divider} />
+              <div>
+                <p>CPU利用率</p>
+                <p>
+                  <span className={styles.fontStyle}>2.3%</span>
+                </p>
+              </div>
+            </div>
             {/* <Area {...config1} /> */}
           </ProCard>
         </Col>
-        <Col span={3}>
-          <ProCard style={asd}> 5</ProCard>
+        <Col span={3} className={styles.minCard}>
+          <ProCard style={{ ...asd, padding: '10px' }}>
+            <h3>内存</h3>
+            <div style={{ fontSize: '12px', display: 'flex' }}>
+              <div>
+                <p>内存总量</p>
+                <p>
+                  <span className={styles.fontStyle}>15G</span>
+                </p>
+              </div>
+              <Divider type="vertical" className={styles.divider} />
+              <div>
+                <p>剩余可用内存</p>
+                <p>
+                  <span className={styles.fontStyle}>3G</span>
+                </p>
+              </div>
+            </div>
+            {/* <Area {...config1} /> */}
+          </ProCard>
         </Col>
-        <Col span={3}>
-          <ProCard style={asd}>6</ProCard>
+        <Col span={3} className={styles.minCard}>
+          <ProCard style={{ ...asd, padding: '10px' }}>
+            <h3>磁盘</h3>
+            <div style={{ fontSize: '12px', display: 'flex' }}>
+              <div>
+                <p>磁盘空间</p>
+                <p>
+                  <span className={styles.fontStyle}>20T</span>
+                </p>
+              </div>
+              <Divider type="vertical" className={styles.divider} />
+              <div>
+                <p>剩余可用空间</p>
+                <p>
+                  <span className={styles.fontStyle}>14T</span>
+                </p>
+              </div>
+            </div>
+            {/* <Area {...config1} /> */}
+          </ProCard>
         </Col>
       </Row>
       <Row style={{ marginBottom: '20px' }}>
         {/* <Area {...config1} /> */}
-        <ProCard className="bgbox" layout="center">
-          <Line {...config} />
+        <ProCard>
+          <div>
+            <Tabs tabBarExtraContent={operations} items={items} />
+          </div>
+          <div>
+            <Line {...config} />
+          </div>
         </ProCard>
       </Row>
       <Row>
@@ -310,10 +405,12 @@ const TableList: React.FC<unknown> = () => {
         <Col span={6} style={{ marginLeft: 20 }}>
           <ProList<DataItem>
             rowKey="id"
-            headerTitle="Top 10 异常POD"
+            headerTitle={
+              <span className={styles.topHeader}>Top 10 异常POD</span>
+            }
             rowClassName="sfg"
             dataSource={dataSource}
-            showActions="hover"
+            showActions="hover" // 9bb6c6
             editable={{
               onSave: async (key, record, originRow) => {
                 console.log(key, record, originRow);
@@ -329,70 +426,13 @@ const TableList: React.FC<unknown> = () => {
                 dataIndex: 'image',
                 editable: false,
               },
-              // description: {
-              //   dataIndex: 'desc',
-              // },
-
               actions: {
-                render: (text, row, index, action) => [
-                  <a
-                    onClick={() => {
-                      action?.startEditable(row.id);
-                    }}
-                    key="link"
-                  >
-                    编辑
-                  </a>,
-                ],
+                render: (text, row) => <span>{row.id}</span>,
               },
             }}
           />
         </Col>
       </Row>
-
-      {stepFormValues && Object.keys(stepFormValues).length ? (
-        <UpdateForm
-          onSubmit={async (value) => {
-            const success = await handleUpdate(value);
-            if (success) {
-              handleUpdateModalVisible(false);
-              setStepFormValues({});
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          onCancel={() => {
-            handleUpdateModalVisible(false);
-            setStepFormValues({});
-          }}
-          updateModalVisible={updateModalVisible}
-          values={stepFormValues}
-        />
-      ) : null}
-
-      <Drawer
-        width={600}
-        open={!!row}
-        onClose={() => {
-          setRow(undefined);
-        }}
-        closable={false}
-      >
-        {row?.time && (
-          <ProDescriptions<API.UserInfo>
-            column={2}
-            title={row?.time}
-            request={async () => ({
-              data: row || {},
-            })}
-            params={{
-              id: row?.time,
-            }}
-            columns={columns}
-          />
-        )}
-      </Drawer>
     </PageContainer>
   );
 };
